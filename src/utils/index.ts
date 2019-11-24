@@ -40,9 +40,11 @@ const createResponseError = (e: JsonRpcError): ResponseError => {
   return responseError
 }
 
-export const createResponse = (
-  { id, result, error }: ProxyResponse
-): ResponseMessage => {
+export const createResponse = ({
+  id,
+  result,
+  error,
+}: ProxyResponse): ResponseMessage => {
   const response: ResponseMessage = {
     jsonrpc,
     id,
