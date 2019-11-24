@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
-      "target": "ES2016",
+      "target": "ES2019",
       "module": "commonjs",
       "lib": [
-        "es2016"
+        "es2019"
       ],
       "declaration": true,
       "sourceMap": true,
@@ -22,5 +22,8 @@
     },
     "include": [
       "./src/**/*",
+    ],
+    "exclude": [
+      "./src/tests/**/*"
     ]
   }
