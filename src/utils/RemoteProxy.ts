@@ -24,7 +24,7 @@ export class RemoteProxy {
 
   public getProxy<TRemoteService>(
     sendRequest: (request: ProxyRequest) => void,
-    timeout = DEFAULT_TIMEOUT
+    requestTimeoutMs = DEFAULT_TIMEOUT
   ): TRemoteService {
     const requestCallbacks = this.requestCallbacks
     const requestTimeouts = this.requestTimeouts
@@ -42,36 +42,34 @@ export class RemoteProxy {
           if (typeof prop === 'symbol') return null
 
           if (prop && prop.startsWith && !prop.startsWith('_')) {
-            return async (...params: any): Promise<any> => {
-              const id = getId()
-              sendRequest({ id, method: prop, params })
-              const promise = new Promise((resolve, reject) => {
-                const timeoutTimer = setTimeout(() => {
+            return (...params: any): Promise<any> =>
+              new Promise((resolve, reject) => {
+                const id = getId()
+                sendRequest({ id, method: prop, params })
+                const timeout = setTimeout(() => {
                   this.deleteRequestCallback(id)
                   reject(new Error(`Request ${prop} timed out`))
-                }, timeout)
+                }, requestTimeoutMs)
 
-                requestTimeouts.set(id, timeoutTimer)
+                requestTimeouts.set(id, timeout)
                 requestCallbacks.set(id, { resolve, reject })
               })
-              return promise
-            }
-          } else {
-            return () => {
-              throw new Error('Cannot call private function')
-            }
+          }
+
+          return () => {
+            throw new Error('Cannot call private function')
           }
         },
       }
     ) as TRemoteService
   }
 
-  public getRequestCallbacks() {
-    return this.requestCallbacks
+  public getRequestCallbacksCount() {
+    return this.requestCallbacks.size
   }
 
-  public getRequestTimeouts() {
-    return this.requestTimeouts
+  public getRequestTimeoutsCount() {
+    return this.requestTimeouts.size
   }
 
   private deleteRequestTimeout(id: JsonRpcId) {

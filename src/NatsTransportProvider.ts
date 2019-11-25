@@ -1,6 +1,6 @@
 import { connect, NatsConnectionOptions, Client, Subscription } from 'ts-nats'
 import { MessagingProvider, RequestMessage } from './interfaces'
-import { RemoteProxy } from './utils'
+import { RemoteProxy } from './utils/RemoteProxy'
 
 const defaultServers: NatsConnectionOptions['servers'] = [
   'nats://localhost:4222',
@@ -53,7 +53,7 @@ export class NatsTransportProvider implements MessagingProvider {
 
     const subscribe = await this.nc.subscribe(name, (err, msg) => {
       if (!err) {
-        proxy.onMessage(msg)
+        remoteProxy.onMessage(msg)
       }
       console.log(err)
       console.log(msg)

@@ -12,11 +12,8 @@ interface TestService {
 }
 
 const checkEmptyMaps = (remoteProxy: RemoteProxy) => {
-  const callbacks = remoteProxy.getRequestCallbacks()
-  expect(callbacks.size).to.equal(0)
-
-  const timeouts = remoteProxy.getRequestTimeouts()
-  expect(timeouts.size).to.equal(0)
+  expect(remoteProxy.getRequestCallbacksCount()).to.equal(0)
+  expect(remoteProxy.getRequestTimeoutsCount()).to.equal(0)
 }
 
 describe('RemoteProxy uint test', () => {
