@@ -9,7 +9,7 @@ import {
   ProxyRequest,
 } from '../interfaces'
 
-export const getId = (): JsonRpcId =>
+export const getId = (): string =>
   Math.random()
     .toString(36)
     .substring(2, 15) +
@@ -54,7 +54,7 @@ export const createResponse = ({
   }
 
   if (error) {
-    response.error = createResponseError(error)
+    // response.error = createResponseError(error)
   }
 
   if (result) {

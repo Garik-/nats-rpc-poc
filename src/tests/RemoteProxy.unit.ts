@@ -1,9 +1,5 @@
 import { RemoteProxy } from '../utils/RemoteProxy'
-import {
-  ProxyRequest,
-  JsonRpcError,
-  JsonRpcErrorCode,
-} from '../interfaces/index'
+import { ProxyRequest } from '../interfaces'
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 
@@ -67,7 +63,7 @@ describe('RemoteProxy uint test', () => {
         setTimeout(() => {
           remoteProxy.onMessage({
             id,
-            error: new JsonRpcError('error message'),
+            error: new Error('error message'),
           })
         }, 10)
       },
@@ -78,7 +74,6 @@ describe('RemoteProxy uint test', () => {
       await proxy.lol(1, 'test')
     } catch (err) {
       expect(err.message).to.equal('error message')
-      expect(err.code).to.equal(JsonRpcErrorCode.INTERNAL_ERROR)
     }
 
     checkEmptyMaps(remoteProxy)

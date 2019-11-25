@@ -1,9 +1,4 @@
-import {
-  JsonRpcId,
-  ProxyRequest,
-  ProxyResponse,
-  JsonRpcError,
-} from '../interfaces'
+import { ProxyRequest, ProxyResponse, ProxyMessageId } from '../interfaces'
 import { getId } from './'
 
 const DEFAULT_TIMEOUT = 15000
@@ -14,8 +9,8 @@ interface ProxyRequestCallback {
 }
 
 export class RemoteProxy {
-  private requestCallbacks: Map<JsonRpcId, ProxyRequestCallback>
-  private requestTimeouts: Map<JsonRpcId, NodeJS.Timer>
+  private requestCallbacks: Map<ProxyMessageId, ProxyRequestCallback>
+  private requestTimeouts: Map<ProxyMessageId, NodeJS.Timer>
 
   constructor() {
     this.requestCallbacks = new Map()
@@ -72,7 +67,7 @@ export class RemoteProxy {
     return this.requestTimeouts.size
   }
 
-  private deleteRequestTimeout(id: JsonRpcId) {
+  private deleteRequestTimeout(id: ProxyMessageId) {
     const timer = this.requestTimeouts.get(id)
     if (timer) {
       clearTimeout(timer)
@@ -80,7 +75,7 @@ export class RemoteProxy {
     }
   }
 
-  private deleteRequestCallback(id: JsonRpcId) {
+  private deleteRequestCallback(id: ProxyMessageId) {
     this.deleteRequestTimeout(id)
     this.requestCallbacks.delete(id)
   }
@@ -92,7 +87,7 @@ export class RemoteProxy {
       this.deleteRequestCallback(id)
 
       if (error) {
-        if (error instanceof JsonRpcError) {
+        if (error instanceof Error) {
           callback.reject(error)
         } else {
           throw new Error(`[${id}] onMessage: error not valid type`)

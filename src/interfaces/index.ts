@@ -1,5 +1,7 @@
 export type JsonRpcVersion = '2.0'
 export type JsonRpcId = string | number | null
+export type ProxyMessageId = string | number
+
 export enum JsonRpcErrorCode {
   /**
    * Invalid JSON was received by the server.
@@ -81,13 +83,13 @@ export interface ResponseMessage {
 }
 
 export interface ProxyRequest {
-  id: JsonRpcId
+  id: ProxyMessageId
   method: string
   params?: any
 }
 
 export interface ProxyResponse {
-  id: JsonRpcId
+  id: ProxyMessageId
   result?: any
-  error?: JsonRpcError
+  error?: Error
 }
