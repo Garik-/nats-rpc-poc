@@ -33,7 +33,10 @@ export const createRequest = ({
 
 const createResponseError = (e: JsonRpcError): ResponseError => {
   const { message, stack, code } = e
-  const responseError: ResponseError = { code, message }
+  const responseError: ResponseError = {
+    code,
+    message,
+  }
   if (stack) {
     responseError.data = stack
   }

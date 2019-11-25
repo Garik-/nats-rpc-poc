@@ -1,5 +1,9 @@
 import { RemoteProxy } from '../utils/RemoteProxy'
-import { ProxyRequest } from '../interfaces/index'
+import {
+  ProxyRequest,
+  JsonRpcError,
+  JsonRpcErrorCode,
+} from '../interfaces/index'
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 
@@ -52,6 +56,33 @@ describe('RemoteProxy uint test', () => {
 
     const result = await proxy.lol(1, 'test')
     expect(result).to.equal('blabla')
+
+    checkEmptyMaps(remoteProxy)
+  })
+
+  it('Await error', async () => {
+    const remoteProxy = new RemoteProxy()
+    const proxy = remoteProxy.getProxy<TestService>(
+      ({ method, params, id }: ProxyRequest) => {
+        expect(method).to.equal('lol')
+        expect(params).to.deep.equal([1, 'test'])
+
+        setTimeout(() => {
+          remoteProxy.onMessage({
+            id,
+            error: new JsonRpcError('error message'),
+          })
+        }, 10)
+      },
+      1000
+    )
+
+    try {
+      await proxy.lol(1, 'test')
+    } catch (err) {
+      expect(err.message).to.equal('error message')
+      expect(err.code).to.equal(JsonRpcErrorCode.INTERNAL_ERROR)
+    }
 
     checkEmptyMaps(remoteProxy)
   })

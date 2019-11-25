@@ -38,12 +38,25 @@ export interface MessagingProvider {
 
 export class JsonRpcError extends Error {
   public code: JsonRpcErrorCode
-  constructor(code: JsonRpcErrorCode, message: string) {
+  constructor(
+    message: string,
+    code: JsonRpcErrorCode = JsonRpcErrorCode.INTERNAL_ERROR
+  ) {
     super(message)
     this.code = code
 
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, JsonRpcError.prototype)
+  }
+
+  static fromError(
+    err: Error,
+    code: JsonRpcErrorCode = JsonRpcErrorCode.INTERNAL_ERROR
+  ): JsonRpcError {
+    const e = err as JsonRpcError
+    e.code = code
+
+    return e
   }
 }
 

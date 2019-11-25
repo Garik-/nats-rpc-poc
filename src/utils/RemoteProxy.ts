@@ -27,7 +27,7 @@ export class RemoteProxy {
     timeout = DEFAULT_TIMEOUT
   ): TRemoteService {
     const requestCallbacks = this.requestCallbacks
-    const requestTimeout = this.requestTimeouts
+    const requestTimeouts = this.requestTimeouts
     return new Proxy(
       {},
       {
@@ -51,7 +51,7 @@ export class RemoteProxy {
                   reject(new Error(`Request ${prop} timed out`))
                 }, timeout)
 
-                requestTimeout.set(id, timeoutTimer)
+                requestTimeouts.set(id, timeoutTimer)
                 requestCallbacks.set(id, { resolve, reject })
               })
               return promise
@@ -97,8 +97,7 @@ export class RemoteProxy {
         if (error instanceof JsonRpcError) {
           callback.reject(error)
         } else {
-          console.error(error)
-          throw new Error('onMessage error not valid type')
+          throw new Error(`[${id}] onMessage: error not valid type`)
         }
       } else {
         callback.resolve(result)
