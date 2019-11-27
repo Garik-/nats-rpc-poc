@@ -10,7 +10,7 @@
   "author": "Gar|k <garik.djan@gmail.com>",
   "private": false,
   "scripts": {
-      "prepublish": "yarn build",
+      "prepare": "yarn build",
       "build": "rm -rf lib/* && tsc",
       "start:service": "NATS_SERVER=nats://localhost:4222 ts-node examples/MathService/service.ts",
       "lint": "eslint 'src/**/*.{ts,tsx}'",
