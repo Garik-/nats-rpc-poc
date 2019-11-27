@@ -28,14 +28,6 @@ export enum JsonRpcErrorCode {
   SERVER_ERROR = -32000,
 }
 
-export interface MessagingProvider {
-  // create: () => Promise<MessagingProvider>
-  destroy: () => Promise<void>
-  exposeService: (name: string, service: any) => Promise<void>
-  stopService: (name: string) => Promise<void>
-  getRemoteService: <TRemoteService>(name: string) => Promise<TRemoteService>
-}
-
 export class JsonRpcError extends Error {
   public code: JsonRpcErrorCode
   constructor(

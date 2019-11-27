@@ -3,7 +3,7 @@ import {
   JsonRpcRequest,
   JsonRpcError,
   JsonRpcErrorCode,
-} from '../interfaces'
+} from '../interfaces/JsonRpc'
 
 import { jsonrpc } from './'
 

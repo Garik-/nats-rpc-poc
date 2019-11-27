@@ -3,7 +3,7 @@ import {
   JsonRpcResponse,
   JsonRpcId,
   JsonRpcError,
-} from '../interfaces'
+} from '../interfaces/JsonRpc'
 import { getId } from './'
 
 const DEFAULT_TIMEOUT = 15000

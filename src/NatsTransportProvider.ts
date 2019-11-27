@@ -1,15 +1,12 @@
 import { connect, NatsConnectionOptions, Client, Subscription } from 'ts-nats'
-import {
-  MessagingProvider,
-  JsonRpcRequest,
-  JsonRpcResponse,
-} from './interfaces'
+import { MessagingProvider } from './interfaces/MessagingProvider'
+import { JsonRpcRequest, JsonRpcResponse } from './interfaces/JsonRpc'
 import { RemoteProxy } from './utils/RemoteProxy'
 import { ServiceWrapper } from './utils/ServiceWrapper'
-import { parseJsonRpc, getId } from './utils/'
+import { parseJsonRpc } from './utils/'
 
 const defaultServers: NatsConnectionOptions['servers'] = [
-  'nats://localhost:4222',
+  process.env.NATS_SERVER || 'nats://localhost:4222',
 ]
 
 export class NatsTransportProvider implements MessagingProvider {

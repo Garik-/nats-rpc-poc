@@ -4,7 +4,7 @@ import {
   JsonRpcErrorCode,
   JsonRpcError,
   JsonRpcRequest,
-} from '../interfaces'
+} from '../interfaces/JsonRpc'
 
 export const jsonrpc: JsonRpcVersion = '2.0'
 

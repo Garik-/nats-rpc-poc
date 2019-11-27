@@ -1,19 +1,33 @@
 {
   "name": "nats-rpc-poc",
   "version": "0.0.1",
-  "description": "",
+  "description": "This library allows you to wrap your classes and use them over the network",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Garik-/nats-rpc-poc.git"
+  },
+  "author": "Gar|k <garik.djan@gmail.com>",
   "private": false,
   "scripts": {
+      "prepublish": "yarn build",
       "build": "rm -rf lib/* && tsc",
-      "start:service": "ts-node examples/MathService/service.ts",
+      "start:service": "NATS_SERVER=nats://localhost:4222 ts-node examples/MathService/service.ts",
       "lint": "eslint 'src/**/*.{ts,tsx}'",
       "test": "mocha -r ts-node/register src/tests/*.*.ts",
-      "start:client": "mocha -r ts-node/register examples/MathService/service.test.ts"
+      "start:client": "NATS_SERVER=nats://localhost:4222 mocha -r ts-node/register examples/MathService/service.test.ts"
   },
   "engines": {
     "node": ">= 8.16.0"
   },
+  "keywords": [
+    "NATS",
+    "JSON-RPC"
+  ],
+  "bugs": {
+    "url": "https://github.com/Garik-/nats-rpc-poc/issues"
+  },
+  "homepage": "https://github.com/Garik-/nats-rpc-poc/#readme",
   "dependencies": {
     "ts-nats": "^1.2.4"
   },
@@ -33,5 +47,7 @@
     "@typescript-eslint/parser": "^2.7.0",
     "chai": "^4.1.2",
     "mocha": "^5.2.0"
-  }
+  },
+  "main": "lib/NatsTransportProvider.js",
+  "types": "lib/NatsTransportProvider.d.ts"
 }
