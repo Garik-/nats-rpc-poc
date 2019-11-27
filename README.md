@@ -16,7 +16,7 @@ const result = await myService.anyMethod(param1, param2)
 Don't forget to call `stopService` and `destory` for correctly close connection
 
 ## Environments & dependencies
-Install node modules and start NAST on nats://localhost:4222
+Install node modules and start NATS on nats://localhost:4222
 ```BASH
 $ docker-compose up -d
 $ yarn
