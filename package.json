@@ -6,10 +6,10 @@
   "private": false,
   "scripts": {
       "build": "rm -rf lib/* && tsc",
-      "start": "ts-node examples/MathService/index.ts",
+      "start:service": "ts-node examples/MathService/service.ts",
       "lint": "eslint 'src/**/*.{ts,tsx}'",
       "test": "mocha -r ts-node/register src/tests/*.*.ts",
-      "start:client": "ts-node examples/MathService/MathServiceClient.ts"
+      "start:client": "ts-node examples/MathService/client.ts"
   },
   "engines": {
     "node": ">= 8.16.0"
