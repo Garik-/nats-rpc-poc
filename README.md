@@ -9,7 +9,7 @@ await nastTransportProvider.exposeService('MyService', new MyServiceClass())
 2. Write client code
 ```TypeScript
 const nastTransportProvider = await NatsTransportProvider.create()
-const myService = await nc.getRemoteService<MyService>('MyService')
+const myService = await nastTransportProvider.getRemoteService<MyService>('MyService')
 
 const result = await myService.anyMethod(param1, param2)
 ```
