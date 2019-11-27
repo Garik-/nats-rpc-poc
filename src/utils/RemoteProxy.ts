@@ -46,7 +46,16 @@ export class RemoteProxy {
             return (...params: any): Promise<any> =>
               new Promise((resolve, reject) => {
                 const id = getId()
-                sendRequest({ jsonrpc, id, method: prop, params })
+                const request: JsonRpcRequest = {
+                  jsonrpc,
+                  id,
+                  method: prop,
+                  params,
+                }
+
+                console.log('RemoteProxy.sendRequest', request)
+                sendRequest(request)
+
                 const timeout = setTimeout(() => {
                   this.deleteRequestCallback(id)
                   reject(new Error(`Request ${prop} timed out`))
@@ -87,6 +96,7 @@ export class RemoteProxy {
   }
 
   public onMessage(message: JsonRpcResponse) {
+    console.log('RemoteProxy.onMessage', message)
     const { id, result, error } = message
     const callback = this.requestCallbacks.get(id)
     if (callback) {

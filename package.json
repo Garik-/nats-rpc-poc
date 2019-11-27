@@ -8,7 +8,8 @@
       "build": "rm -rf lib/* && tsc",
       "start": "ts-node examples/MathService/index.ts",
       "lint": "eslint 'src/**/*.{ts,tsx}'",
-      "test": "mocha -r ts-node/register src/tests/*.*.ts"
+      "test": "mocha -r ts-node/register src/tests/*.*.ts",
+      "start:client": "ts-node examples/MathService/MathServiceClient.ts"
   },
   "engines": {
     "node": ">= 8.16.0"

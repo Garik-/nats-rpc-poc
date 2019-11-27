@@ -1,7 +1,12 @@
 import { connect, NatsConnectionOptions, Client, Subscription } from 'ts-nats'
-import { MessagingProvider, JsonRpcRequest } from './interfaces'
+import {
+  MessagingProvider,
+  JsonRpcRequest,
+  JsonRpcResponse,
+} from './interfaces'
 import { RemoteProxy } from './utils/RemoteProxy'
-import { parseJsonRpcResponse } from './utils/'
+import { ServiceWrapper } from './utils/ServiceWrapper'
+import { parseJsonRpc } from './utils/'
 
 const defaultServers: NatsConnectionOptions['servers'] = [
   'nats://localhost:4222',
@@ -37,10 +42,20 @@ export class NatsTransportProvider implements MessagingProvider {
 
   public async exposeService(name: string, service: any) {
     console.log('exposeService', name, service)
-    const subscribe = await this.nc.subscribe(name, (err, msg) => {
-      console.log(err)
-      console.log(msg)
+
+    const wrapper = new ServiceWrapper(service, (response: JsonRpcResponse) =>
+      this.nc.publish(name + '_response', JSON.stringify(response))
+    )
+
+    const subscribe = await this.nc.subscribe(name + '_request', (err, msg) => {
+      if (err !== null) {
+        console.error(err)
+      } else {
+        const request = parseJsonRpc(msg.data)
+        wrapper.onRequest(request as JsonRpcRequest)
+      }
     })
+
     this.services.set(name, subscribe)
   }
 
@@ -49,19 +64,20 @@ export class NatsTransportProvider implements MessagingProvider {
   ): Promise<TRemoteService> {
     const remoteProxy = new RemoteProxy()
     const proxy = remoteProxy.getProxy((request: JsonRpcRequest) => {
-      this.nc.publish(name, JSON.stringify(request))
+      this.nc.publish(name + '_request', JSON.stringify(request))
     })
 
-    const subscribe = await this.nc.subscribe(name, (err, msg) => {
-      if (!err) {
-        console.error(err)
-      } else {
-        const response = parseJsonRpcResponse(msg.data)
-        remoteProxy.onMessage(response)
+    const subscribe = await this.nc.subscribe(
+      name + '_response',
+      (err, msg) => {
+        if (err !== null) {
+          console.error(err)
+        } else {
+          const response = parseJsonRpc(msg.data)
+          remoteProxy.onMessage(response as JsonRpcResponse)
+        }
       }
-      console.log(err)
-      console.log(msg)
-    })
+    )
     this.services.set(name, subscribe)
 
     return proxy as TRemoteService
