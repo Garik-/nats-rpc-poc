@@ -13,6 +13,7 @@ const myService = await nastTransportProvider.getRemoteService<MyService>('MySer
 
 const result = await myService.anyMethod(param1, param2)
 ```
+Don't forget to call `stopService` and `destory` for correctly close connection
 
 ## Environments & dependencies
 Install node modules and start NAST on nast://localhost:4222
