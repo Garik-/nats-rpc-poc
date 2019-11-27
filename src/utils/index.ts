@@ -1,13 +1,11 @@
 import {
-  JsonRpcId,
+  JsonRpcResponse,
   JsonRpcVersion,
-  RequestMessage,
-  ResponseMessage,
-  ResponseError,
+  JsonRpcErrorCode,
   JsonRpcError,
-  ProxyResponse,
-  ProxyRequest,
 } from '../interfaces'
+
+export const jsonrpc: JsonRpcVersion = '2.0'
 
 export const getId = (): string =>
   Math.random()
@@ -17,49 +15,27 @@ export const getId = (): string =>
     .toString(36)
     .substring(2, 15)
 
-const jsonrpc: JsonRpcVersion = '2.0'
-
-export const createRequest = ({
-  method,
-  params,
-  id,
-}: ProxyRequest): RequestMessage => {
-  const request: RequestMessage = { jsonrpc, method, id }
-  if (params) {
-    request.params = params
-  }
-  return request
-}
-
-const createResponseError = (e: JsonRpcError): ResponseError => {
-  const { message, stack, code } = e
-  const responseError: ResponseError = {
-    code,
-    message,
-  }
-  if (stack) {
-    responseError.data = stack
-  }
-  return responseError
-}
-
-export const createResponse = ({
-  id,
-  result,
+const createErrorResponse = (error: JsonRpcError): JsonRpcResponse => ({
+  id: null,
+  jsonrpc,
   error,
-}: ProxyResponse): ResponseMessage => {
-  const response: ResponseMessage = {
-    jsonrpc,
-    id,
+})
+
+export const parseJsonRpcResponse = (msg: string): JsonRpcResponse => {
+  try {
+    const json = JSON.parse(msg)
+    if (!('id' in json) || !('jsonprc' in json)) {
+      return createErrorResponse(
+        new JsonRpcError('Invalid request', JsonRpcErrorCode.INVALID_REQUEST)
+      )
+    }
+
+    return json as JsonRpcResponse
+  } catch (e) {
+    console.error(e)
   }
 
-  if (error) {
-    // response.error = createResponseError(error)
-  }
-
-  if (result) {
-    response.result = result
-  }
-
-  return response
+  return createErrorResponse(
+    new JsonRpcError('Parse error', JsonRpcErrorCode.PARSE_ERROR)
+  )
 }

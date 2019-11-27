@@ -1,11 +1,13 @@
 import { RemoteProxy } from '../utils/RemoteProxy'
-import { ProxyRequest } from '../interfaces'
+import { JsonRpcRequest, JsonRpcError } from '../interfaces'
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 
 interface TestService {
   lol: (a: number, b: string) => Promise<void>
 }
+
+const jsonrpc = '2.0'
 
 const checkEmptyMaps = (remoteProxy: RemoteProxy) => {
   expect(remoteProxy.getRequestCallbacksCount()).to.equal(0)
@@ -16,7 +18,7 @@ describe('RemoteProxy uint test', () => {
   it('TestService proxy', async () => {
     const remoteProxy = new RemoteProxy()
     const proxy = remoteProxy.getProxy<TestService>(
-      ({ method, params }: ProxyRequest) => {
+      ({ method, params }: JsonRpcRequest) => {
         expect(method).to.equal('lol')
         expect(params).to.deep.equal([1, 'test'])
       },
@@ -36,12 +38,12 @@ describe('RemoteProxy uint test', () => {
   it('Await result', async () => {
     const remoteProxy = new RemoteProxy()
     const proxy = remoteProxy.getProxy<TestService>(
-      ({ method, params, id }: ProxyRequest) => {
+      ({ method, params, id }: JsonRpcRequest) => {
         expect(method).to.equal('lol')
         expect(params).to.deep.equal([1, 'test'])
 
         setTimeout(() => {
-          remoteProxy.onMessage({ id, result: 'blabla' })
+          remoteProxy.onMessage({ jsonrpc, id, result: 'blabla' })
         }, 10)
       },
       1000
@@ -56,14 +58,15 @@ describe('RemoteProxy uint test', () => {
   it('Await error', async () => {
     const remoteProxy = new RemoteProxy()
     const proxy = remoteProxy.getProxy<TestService>(
-      ({ method, params, id }: ProxyRequest) => {
+      ({ method, params, id }: JsonRpcRequest) => {
         expect(method).to.equal('lol')
         expect(params).to.deep.equal([1, 'test'])
 
         setTimeout(() => {
           remoteProxy.onMessage({
+            jsonrpc,
             id,
-            error: new Error('error message'),
+            error: new JsonRpcError('error message'),
           })
         }, 10)
       },

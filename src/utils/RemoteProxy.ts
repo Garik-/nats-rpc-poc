@@ -1,16 +1,22 @@
-import { ProxyRequest, ProxyResponse, ProxyMessageId } from '../interfaces'
+import {
+  JsonRpcRequest,
+  JsonRpcResponse,
+  JsonRpcId,
+  JsonRpcError,
+} from '../interfaces'
 import { getId } from './'
 
 const DEFAULT_TIMEOUT = 15000
+const jsonrpc = '2.0'
 
-interface ProxyRequestCallback {
+interface RequestCallback {
   resolve: (data: any) => void
   reject: (error: Error) => void
 }
 
 export class RemoteProxy {
-  private requestCallbacks: Map<ProxyMessageId, ProxyRequestCallback>
-  private requestTimeouts: Map<ProxyMessageId, NodeJS.Timer>
+  private requestCallbacks: Map<JsonRpcId, RequestCallback>
+  private requestTimeouts: Map<JsonRpcId, NodeJS.Timer>
 
   constructor() {
     this.requestCallbacks = new Map()
@@ -18,7 +24,7 @@ export class RemoteProxy {
   }
 
   public getProxy<TRemoteService>(
-    sendRequest: (request: ProxyRequest) => void,
+    sendRequest: (request: JsonRpcRequest) => void,
     requestTimeoutMs = DEFAULT_TIMEOUT
   ): TRemoteService {
     const requestCallbacks = this.requestCallbacks
@@ -40,7 +46,7 @@ export class RemoteProxy {
             return (...params: any): Promise<any> =>
               new Promise((resolve, reject) => {
                 const id = getId()
-                sendRequest({ id, method: prop, params })
+                sendRequest({ jsonrpc, id, method: prop, params })
                 const timeout = setTimeout(() => {
                   this.deleteRequestCallback(id)
                   reject(new Error(`Request ${prop} timed out`))
@@ -67,7 +73,7 @@ export class RemoteProxy {
     return this.requestTimeouts.size
   }
 
-  private deleteRequestTimeout(id: ProxyMessageId) {
+  private deleteRequestTimeout(id: JsonRpcId) {
     const timer = this.requestTimeouts.get(id)
     if (timer) {
       clearTimeout(timer)
@@ -75,19 +81,19 @@ export class RemoteProxy {
     }
   }
 
-  private deleteRequestCallback(id: ProxyMessageId) {
+  private deleteRequestCallback(id: JsonRpcId) {
     this.deleteRequestTimeout(id)
     this.requestCallbacks.delete(id)
   }
 
-  public onMessage(message: ProxyResponse) {
+  public onMessage(message: JsonRpcResponse) {
     const { id, result, error } = message
     const callback = this.requestCallbacks.get(id)
     if (callback) {
       this.deleteRequestCallback(id)
 
       if (error) {
-        if (error instanceof Error) {
+        if (error instanceof JsonRpcError) {
           callback.reject(error)
         } else {
           throw new Error(`[${id}] onMessage: error not valid type`)

@@ -1,6 +1,7 @@
 import { connect, NatsConnectionOptions, Client, Subscription } from 'ts-nats'
-import { MessagingProvider, RequestMessage } from './interfaces'
+import { MessagingProvider, JsonRpcRequest } from './interfaces'
 import { RemoteProxy } from './utils/RemoteProxy'
+import { parseJsonRpcResponse } from './utils/'
 
 const defaultServers: NatsConnectionOptions['servers'] = [
   'nats://localhost:4222',
@@ -47,13 +48,16 @@ export class NatsTransportProvider implements MessagingProvider {
     name: string
   ): Promise<TRemoteService> {
     const remoteProxy = new RemoteProxy()
-    const proxy = remoteProxy.getProxy((request: RequestMessage) => {
-      this.nc.publish(name, request)
+    const proxy = remoteProxy.getProxy((request: JsonRpcRequest) => {
+      this.nc.publish(name, JSON.stringify(request))
     })
 
     const subscribe = await this.nc.subscribe(name, (err, msg) => {
       if (!err) {
-        remoteProxy.onMessage(msg)
+        console.error(err)
+      } else {
+        const response = parseJsonRpcResponse(msg.data)
+        remoteProxy.onMessage(response)
       }
       console.log(err)
       console.log(msg)
