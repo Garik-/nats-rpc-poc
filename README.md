@@ -9,13 +9,14 @@ await nastTransportProvider.exposeService('MyService', new MyServiceClass())
 2. Write client code
 ```TypeScript
 const nastTransportProvider = await NatsTransportProvider.create()
-const myService = await nc.getRemoteService<MyService>('MyService')
+const myService = await nastTransportProvider.getRemoteService<MyService>('MyService')
 
 const result = await myService.anyMethod(param1, param2)
 ```
+Don't forget to call `stopService` and `destory` for correctly close connection
 
 ## Environments & dependencies
-Install node modules and start NAST on nast://localhost:4222
+Install node modules and start NATS on nats://localhost:4222
 ```BASH
 $ docker-compose up -d
 $ yarn
