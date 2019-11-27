@@ -9,7 +9,7 @@
       "start:service": "ts-node examples/MathService/service.ts",
       "lint": "eslint 'src/**/*.{ts,tsx}'",
       "test": "mocha -r ts-node/register src/tests/*.*.ts",
-      "start:client": "ts-node examples/MathService/client.ts"
+      "start:client": "mocha -r ts-node/register examples/MathService/client.ts"
   },
   "engines": {
     "node": ">= 8.16.0"

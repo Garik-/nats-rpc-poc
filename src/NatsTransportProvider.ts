@@ -6,7 +6,7 @@ import {
 } from './interfaces'
 import { RemoteProxy } from './utils/RemoteProxy'
 import { ServiceWrapper } from './utils/ServiceWrapper'
-import { parseJsonRpc } from './utils/'
+import { parseJsonRpc, getId } from './utils/'
 
 const defaultServers: NatsConnectionOptions['servers'] = [
   'nats://localhost:4222',

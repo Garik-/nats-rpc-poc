@@ -15,10 +15,12 @@ interface RequestCallback {
 }
 
 export class RemoteProxy {
+  private instanceId: JsonRpcId
   private requestCallbacks: Map<JsonRpcId, RequestCallback>
   private requestTimeouts: Map<JsonRpcId, NodeJS.Timer>
 
   constructor() {
+    this.instanceId = getId()
     this.requestCallbacks = new Map()
     this.requestTimeouts = new Map()
   }
@@ -29,6 +31,7 @@ export class RemoteProxy {
   ): TRemoteService {
     const requestCallbacks = this.requestCallbacks
     const requestTimeouts = this.requestTimeouts
+    const instanceId = this.instanceId
     return new Proxy(
       {},
       {
@@ -53,7 +56,7 @@ export class RemoteProxy {
                   params,
                 }
 
-                console.log('RemoteProxy.sendRequest', request)
+                console.log(instanceId, 'RemoteProxy.sendRequest', request)
                 sendRequest(request)
 
                 const timeout = setTimeout(() => {
@@ -96,10 +99,11 @@ export class RemoteProxy {
   }
 
   public onMessage(message: JsonRpcResponse) {
-    console.log('RemoteProxy.onMessage', message)
     const { id, result, error } = message
     const callback = this.requestCallbacks.get(id)
     if (callback) {
+      console.log(this.instanceId, 'RemoteProxy.onMessage', message)
+
       this.deleteRequestCallback(id)
 
       if (error) {

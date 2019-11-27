@@ -1,38 +1,37 @@
+import { describe, it } from 'mocha'
+import { expect } from 'chai'
+
 import { NatsTransportProvider } from '../../src/NatsTransportProvider'
 import { MathServiceImp } from './MathService'
-;(async () => {
-  try {
-    const nc = await NatsTransportProvider.create()
-    const mathService = await nc.getRemoteService<MathServiceImp>('MathService')
 
-    const close = async () => {
-      await nc.stopService('MathService')
-      await nc.destroy()
-    }
+describe('MathService client', async () => {
+  let nc: NatsTransportProvider, mathService: MathServiceImp
 
-    let i = 0
-    const timer = setInterval(async () => {
-      try {
-        const result = await mathService.sum(1, 1)
-        console.log({ result })
-      } catch (err) {
-        console.log(err)
-        clearInterval(timer)
-        close()
-      }
+  before(async () => {
+    nc = await NatsTransportProvider.create()
+    mathService = await nc.getRemoteService<MathServiceImp>('MathService')
+  })
 
-      i++
-      if (i === 10) {
-        clearInterval(timer)
-        close()
-      }
-    }, 600)
+  after(async () => {
+    await nc.stopService('MathService')
+    await nc.destroy()
+  })
 
-    process.on('SIGINT', close)
-    process.on('SIGTERM', close)
+  it('When send 1+1, return 2', async () => {
+    const result = await mathService.sum(1, 1)
+    expect(result).to.equal(1 + 1)
+  })
 
-    // close()
-  } catch (ex) {
-    console.error(ex)
-  }
-})()
+  it('When send two requests at the same time', async () => {
+    const nc2 = await NatsTransportProvider.create()
+    const ms2 = await nc.getRemoteService<MathServiceImp>('MathService')
+
+    const results = await Promise.all([ms2.sum(2, 2), mathService.sum(1, 1)])
+
+    expect(results[0]).to.equal(2 + 2)
+    expect(results[1]).to.equal(1 + 1)
+
+    await nc2.stopService('MathService')
+    await nc2.destroy()
+  })
+})
