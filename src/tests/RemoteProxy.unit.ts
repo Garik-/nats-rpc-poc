@@ -1,5 +1,5 @@
 import { RemoteProxy } from '../utils/RemoteProxy'
-import { JsonRpcRequest, JsonRpcError } from '../interfaces'
+import { JsonRpcRequest, JsonRpcError } from '../interfaces/JsonRpc'
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 

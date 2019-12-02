@@ -5,7 +5,7 @@ import {
   JsonRpcErrorCode,
 } from '../interfaces/JsonRpc'
 
-import { jsonrpc } from './'
+import { jsonrpc } from './JsonRpcMarshaller'
 
 export class ServiceWrapper<TService> {
   service: TService

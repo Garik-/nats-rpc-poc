@@ -32,11 +32,14 @@ export class JsonRpcError extends Error {
   public code: JsonRpcErrorCode
   constructor(
     message: string,
-    code: JsonRpcErrorCode = JsonRpcErrorCode.INTERNAL_ERROR
+    code: JsonRpcErrorCode = JsonRpcErrorCode.INTERNAL_ERROR,
+    data: string | undefined = undefined
   ) {
     super(message)
     this.code = code
-
+    if (data) {
+      this.stack = data
+    }
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, JsonRpcError.prototype)
   }
