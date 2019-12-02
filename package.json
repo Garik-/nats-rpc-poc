@@ -1,6 +1,6 @@
 {
   "name": "nats-rpc-poc",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "This library allows you to wrap your classes and use them over the network",
   "license": "Apache-2.0",
   "repository": {
@@ -39,9 +39,7 @@
     "typescript": "^3.5.1",
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.5.0",
-    "eslint-config-react": "^1.1.7",
     "eslint-plugin-prettier": "^3.1.1",
-    "eslint-plugin-react": "^7.16.0",
     "prettier": "^1.19.1",
     "@typescript-eslint/eslint-plugin": "^2.7.0",
     "@typescript-eslint/parser": "^2.7.0",
