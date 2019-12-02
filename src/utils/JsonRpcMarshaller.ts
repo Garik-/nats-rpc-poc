@@ -34,3 +34,7 @@ export const parseJsonRpc = (msg: string): JsonRpcResponse | JsonRpcRequest => {
     new JsonRpcError('Parse error', JsonRpcErrorCode.PARSE_ERROR)
   )
 }
+
+export const stringifyJsonRpc = (
+  data: JsonRpcResponse | JsonRpcRequest
+): string => JSON.stringify(data)

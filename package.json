@@ -10,12 +10,12 @@
   "author": "Gar|k <garik.djan@gmail.com>",
   "private": false,
   "scripts": {
-      "prepare": "yarn build",
-      "build": "rm -rf lib/* && tsc",
-      "start:service": "NATS_SERVER=nats://localhost:4222 ts-node examples/MathService/service.ts",
-      "lint": "eslint 'src/**/*.{ts,tsx}'",
-      "test": "mocha -r ts-node/register src/tests/*.*.ts",
-      "start:client": "NATS_SERVER=nats://localhost:4222 mocha -r ts-node/register examples/MathService/service.test.ts"
+    "prepare": "yarn build",
+    "build": "rm -rf lib/* && tsc",
+    "start:service": "NATS_SERVER=nats://localhost:4222 ts-node examples/MathService/service.ts",
+    "lint": "eslint 'src/**/*.{ts,tsx}'",
+    "test": "mocha -r ts-node/register src/tests/*.*.ts",
+    "start:client": "NATS_SERVER=nats://localhost:4222 mocha -r ts-node/register examples/MathService/service.test.ts"
   },
   "engines": {
     "node": ">= 8.16.0"
@@ -32,20 +32,24 @@
     "ts-nats": "^1.2.4"
   },
   "devDependencies": {
-    "@types/node": "^12.0.7",
-    "@types/mocha": "^5.2.5",
     "@types/chai": "^4.1.7",
-    "ts-node": "^8.2.0",
-    "typescript": "^3.5.1",
-    "eslint": "^6.6.0",
-    "eslint-config-prettier": "^6.5.0",
-    "eslint-plugin-prettier": "^3.1.1",
-    "prettier": "^1.19.1",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^12.0.7",
     "@typescript-eslint/eslint-plugin": "^2.7.0",
     "@typescript-eslint/parser": "^2.7.0",
     "chai": "^4.1.2",
-    "mocha": "^5.2.0"
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.1.0",
+    "mocha": "^5.2.0",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.2.0",
+    "typescript": "^3.5.1"
   },
   "main": "lib/NatsTransportProvider.js",
-  "types": "lib/NatsTransportProvider.d.ts"
+  "types": "lib/NatsTransportProvider.d.ts",
+  "husky": {
+    "pre-push": "yarn test"
+  }
 }
